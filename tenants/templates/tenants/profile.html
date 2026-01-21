@@ -1,0 +1,17 @@
+{% extends "rent/base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+<h2>My Profile</h2>
+
+<p><b>Name:</b> {{ tenant.name }}</p>
+<p><b>Mobile:</b> {{ tenant.mobile }}</p>
+<p><b>Owner Contact:</b> {{ tenant.owner_mobile }}</p>
+<p><b>Security Deposit:</b> ₹{{ tenant.security_deposit }}</p>
+
+</div>
+
+{% endblock %}

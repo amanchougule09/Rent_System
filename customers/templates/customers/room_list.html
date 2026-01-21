@@ -1,0 +1,26 @@
+{% extends "rent/base.html" %}
+{% load static %}
+
+{% block title %}Rooms{% endblock %}
+
+{% block content %}
+<h2>Available Rooms</h2>
+<div class="room-grid">
+{% for room in rooms %}
+  <div class="room-card">
+    <a href="{% url 'customers:room_detail' room.id %}">
+      {% if room.image %}
+        <img src="{{ room.image.url }}" alt="{{ room.title }}">
+      {% else %}
+        <img src="{% static 'rent/default_room.jpg' %}" alt="{{ room.title }}">
+      {% endif %}
+      <h3>{{ room.title }}</h3>
+      <p class="location">{{ room.location }}</p>
+      <p class="price">₹{{ room.rent_amount }}</p>
+    </a>
+  </div>
+{% empty %}
+  <p>No rooms available right now.</p>
+{% endfor %}
+</div>
+{% endblock %}

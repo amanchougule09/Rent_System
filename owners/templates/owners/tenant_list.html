@@ -1,0 +1,43 @@
+{% extends "rent/base.html" %}
+{% load static %}
+
+{% block title %}My Tenants{% endblock %}
+
+{% block content %}
+
+<div class="top-bar">
+    <h2>Tenants</h2>
+    <a href="{% url 'owners:add_tenant' %}" class="add-btn">Add Tenants</a>
+</div>
+
+<div class="tenant-list">
+
+    {% for tenant in tenants %}
+    <a href="{% url 'owners:tenant_detail' tenant.id %}" class="tenant-card">
+
+        <img src="{% static 'rent/default.png' %}" class="avatar">
+
+        <div class="tenant-info">
+            <div class="name-amount">
+                <h3>{{ tenant.name }}</h3>
+                <p class="amount">₹{{ tenant.amount }}</p>
+            </div>
+            <p class="due">Due: {{ tenant.due_date|default:"30 Days Cycle" }}</p>
+        </div>
+
+        <div class="tenant-right">
+            {% if tenant.paid %}
+                <p class="paid">Paid</p>
+            {% else %}
+                <p class="unpaid">Unpaid</p>
+            {% endif %}
+        </div>
+
+    </a>
+    {% empty %}
+        <p>No tenants yet.</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

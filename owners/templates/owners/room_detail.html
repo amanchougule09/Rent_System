@@ -1,0 +1,92 @@
+{% extends "rent/base.html" %}
+{% load static %}
+
+{% block title %}Room Detail{% endblock %}
+
+{% block content %}
+
+<div class="room-detail-container">
+
+    {% if room.image %}
+        <img src="{{ room.image.url }}" class="room-detail-image">
+    {% endif %}
+
+    <div class="room-detail-body">
+
+        <h2>{{ room.title }}</h2>
+
+        <p class="room-detail-location">{{ room.location }}</p>
+
+        <p class="room-detail-price">₹{{ room.rent_amount }} / month</p>
+
+        <p><strong>Room No:</strong> {{ room.room_number }}</p>
+
+        <p class="room-detail-desc">{{ room.description }}</p>
+
+        <!-- STATUS -->
+        {% if room.is_available %}
+            <span class="badge available">Available</span>
+        {% else %}
+            <span class="badge occupied">Occupied</span>
+        {% endif %}
+
+        <!-- TENANT INFO -->
+        {% if not room.is_available %}
+            <hr>
+            <h3>Tenant Details</h3>
+
+            {% for tenant in room.tenants.all %}
+                <p><strong>Name:</strong> {{ tenant.name }}</p>
+                <p><strong>Rent:</strong> ₹{{ tenant.amount }}</p>
+                <p>
+                    <strong>Status:</strong>
+                    {% if tenant.paid %}
+                        <span style="color:green;">Paid</span>
+                    {% else %}
+                        <span style="color:red;">Unpaid</span>
+                    {% endif %}
+                </p>
+            {% empty %}
+                <p>No tenant assigned</p>
+            {% endfor %}
+        {% endif %}
+
+        <!-- ACTION BUTTONS -->
+        <div class="room-actions">
+
+            {% if room.is_available %}
+                <a href="{% url 'owners:assign_tenant' room.id %}" class="add-btn">
+                    + Assign Tenant
+                </a>
+            {% else %}
+                <form method="POST"
+                    action="{% url 'owners:vacate_room' room.id %}"
+                    onsubmit="return confirm('Vacate this room?');">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">
+                        Vacate Room
+                    </button>
+                </form>
+            {% endif %}
+
+            <a href="{% url 'owners:edit_room' room.id %}" class="add-btn">
+                ✏️ Edit
+            </a>
+
+            <!-- DELETE FORM -->
+            <form method="POST"
+                  action="{% url 'owners:delete_room' room.id %}"
+                  onsubmit="return confirm('Are you sure you want to delete this room?');">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">
+                    🗑 Delete
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

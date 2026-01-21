@@ -1,0 +1,46 @@
+{% extends "rent/base.html" %}
+{% load static %}
+
+{% block title %}Rooms{% endblock %}
+
+{% block content %}
+
+<div class="top-bar">
+    <h2>Your Rooms</h2>
+    <a href="{% url 'owners:add_room' %}" class="add-btn">Add Room</a>
+</div>
+
+<div class="room-grid">
+
+{% for room in rooms %}
+    <a href="{% url 'owners:room_detail' room.id %}" class="room-link">
+
+        <div class="room-card">
+
+            {% if room.image %}
+                <img src="{{ room.image.url }}" alt="Room Image">
+            {% else %}
+                <img src="{% static 'rent/default_room.jpg' %}" alt="Room Image">
+            {% endif %}
+
+            <div class="room-body">
+                <h3>{{ room.title }}</h3>
+                <p class="location">{{ room.location }}</p>
+                <p class="price">₹{{ room.rent_amount }} / month</p>
+
+                {% if room.is_available %}
+                    <span class="badge available">Available</span>
+                {% else %}
+                    <span class="badge occupied">Occupied</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </a>
+{% empty %}
+    <p>No rooms added yet</p>
+{% endfor %}
+
+</div>
+{% endblock %}

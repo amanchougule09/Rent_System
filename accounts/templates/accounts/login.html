@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+<body>
+
+<div class="login-container">
+    <h1>Login</h1>
+
+    <p class="info-text">
+        Owners & Tenants can login here.
+    </p>
+
+    <form method="POST" class="login-form">
+        {% csrf_token %}
+        <input type="text" name="mobile" placeholder="Mobile number" required pattern="[6-9][0-9]{9}">
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="submit-btn">Login</button>
+    </form>
+
+    <p>
+        New Owner? <a href="{% url 'accounts:register' %}"> Register here </a>
+    </p>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

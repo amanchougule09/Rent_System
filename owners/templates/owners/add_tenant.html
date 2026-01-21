@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Tenant</title>
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h2>Add Tenant</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- NAME -->
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text"
+                   name="name"
+                   value="{{ form_data.name }}"
+                   class="{% if errors.name %}input-error{% endif %}">
+            {% if errors.name %}
+                <p class="error-text">{{ errors.name }}</p>
+            {% endif %}
+        </div>
+
+        <!-- MOBILE -->
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text"
+                   name="mobile"
+                   value="{{ form_data.mobile }}"
+                   class="{% if errors.mobile %}input-error{% endif %}">
+            {% if errors.mobile %}
+                <p class="error-text">{{ errors.mobile }}</p>
+            {% endif %}
+        </div>
+
+        <!-- AMOUNT -->
+        <div class="form-group">
+            <label>Amount</label>
+            <input type="number"
+                   name="amount"
+                   value="{{ form_data.amount }}"
+                   class="{% if errors.amount %}input-error{% endif %}">
+            {% if errors.amount %}
+                <p class="error-text">{{ errors.amount }}</p>
+            {% endif %}
+        </div>
+
+                <!-- SECURITY DEPOSIT -->
+        <div class="form-group">
+            <label>Security Deposit</label>
+            <input type="number"
+                   name="security_deposit"
+                   step="0.01"
+                   min="0"
+                   value="{{ form_data.security_deposit|default:'0.00' }}"
+                   class="{% if errors.security_deposit %}input-error{% endif %}">
+            {% if errors.security_deposit %}
+                <p class="error-text">{{ errors.security_deposit }}</p>
+            {% endif %}
+            <small>Leave 0 if none. Date will be captured automatically.</small>
+        </div>
+
+        <!-- DUE TYPE -->
+        <div class="form-group">
+            <label>Due Type</label>
+            <select name="due_type"
+                    id="dueTypeSelect"
+                    class="{% if errors.due_type %}input-error{% endif %}">
+                
+                <option value="">Select Due Type</option>
+
+                <option value="fixed"
+                        {% if form_data.due_type == 'fixed' %}selected{% endif %}>
+                    Fixed Due Date
+                </option>
+
+                <option value="cycle"
+                        {% if form_data.due_type == 'cycle' %}selected{% endif %}>
+                    30 Days Cycle
+                </option>
+
+            </select>
+
+            {% if errors.due_type %}
+                <p class="error-text">{{ errors.due_type }}</p>
+            {% endif %}
+        </div>
+
+        <!-- FIXED DUE DATE -->
+        <div class="form-group"
+             id="fixedDateBox">
+            <label>Due Date</label>
+            <input type="date"
+                   name="due_date"
+                   value="{{ form_data.due_date }}"
+                   class="{% if errors.due_date %}input-error{% endif %}">
+            
+            {% if errors.due_date %}
+                <p class="error-text">{{ errors.due_date }}</p>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="submit-btn">Add Tenant</button>
+        <button type="button" class="submit-btn" id="backBtn">Back</button>
+
+    </form>
+
+</div>
+
+<script>
+    // Get references
+    const dueTypeSelect = document.getElementById("dueTypeSelect");
+    const fixedDateBox = document.getElementById("fixedDateBox");
+
+    // Function to toggle visibility
+    function toggleDueDateBox() {
+        if (dueTypeSelect.value === "cycle") {
+            fixedDateBox.style.display = "none";
+        } else {
+            fixedDateBox.style.display = "block";
+        }
+    }
+
+    // Run once on page load
+    toggleDueDateBox();
+
+    // Run whenever the select changes
+    dueTypeSelect.addEventListener("change", toggleDueDateBox);
+
+    // Back button
+    document.getElementById("backBtn").onclick = function() {
+        window.location.href = "{% url 'owners:dashboard' %}";
+    };
+</script>
+
+
+</body>
+</html>

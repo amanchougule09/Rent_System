@@ -1,0 +1,10 @@
+<h2>Assign Tenant to Room: {{ room.title }}</h2>
+<form method="POST">
+    {% csrf_token %}
+    <select name="tenant" required>
+        {% for tenant in tenants %}
+            <option value="{{ tenant.id }}">{{ tenant.name }} - {{ tenant.user.mobile }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Assign</button>
+</form>

@@ -1,0 +1,41 @@
+{% extends "rent/base.html" %}
+{% block title %}Owner Profile{% endblock %}
+
+{% block content %}
+
+<div class="home-container">
+
+    <div class="section-title">My Profile</div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <h3>{{ owner.name }}</h3>
+            <p>Name</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>{{ owner.user.mobile }}</h3>
+            <p>Mobile Number</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>{{ owner.user.role|title }}</h3>
+            <p>Role</p>
+        </div>
+    </div>
+
+    <div class="section-title">Account Actions</div>
+
+    <div class="quick-actions">
+        <a href="{% url 'accounts:change_password' %}" class="quick-btn">
+            Change Password
+        </a>
+
+        <a href="{% url 'accounts:logout' %}" class="quick-btn danger">
+            Logout
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

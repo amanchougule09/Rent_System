@@ -1,0 +1,43 @@
+{% extends "rent/base.html" %}
+{% block title %}Tenant Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="home-container">
+
+    <div class="section-title">My Rent Details</div>
+
+    <div class="next-due-box">
+        <h3>{{ tenant.name }}</h3>
+        <p><b>Room:</b> {{ tenant.room_number|default:"Not Assigned" }}</p>
+        <p><b>Monthly Rent:</b> ₹{{ tenant.amount }}</p>
+        <p><b>Due Type:</b> {{ tenant.get_due_type_display }}</p>
+
+        {% if tenant.due_date %}
+            <p><b>Due Date:</b> {{ tenant.due_date }}</p>
+        {% else %}
+            <p><b>Cycle:</b> 30 Days</p>
+        {% endif %}
+    </div>
+
+    <div class="section-title">Payment Status</div>
+
+    <div class="stat-box {% if tenant.paid %} {% else %}overdue{% endif %}">
+        {% if tenant.paid %}
+            <h3 class="paid">Paid ✅</h3>
+            <p>Thank you for payment</p>
+        {% else %}
+            <h3 class="unpaid">Unpaid ❌</h3>
+            <p>Please pay before due date</p>
+        {% endif %}
+    </div>
+
+    {% if tenant.is_overdue %}
+    <div class="stat-box overdue">
+        <p>Your rent is overdue ⚠️</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

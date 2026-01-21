@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Room</title>
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h2>Add Room</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ROOM TITLE -->
+        <div class="form-group">
+            <label>Room Title</label>
+            <input type="text"
+                   name="title"
+                   value="{{ form_data.title }}"
+                   class="{% if errors.title %}input-error{% endif %}">
+            {% if errors.title %}
+                <p class="error-text">{{ errors.title }}</p>
+            {% endif %}
+        </div>
+
+        <!-- ROOM NUMBER -->
+        <div class="form-group">
+            <label>Room Number</label>
+            <input type="text"
+                   name="room_number"
+                   value="{{ form_data.room_number }}"
+                   class="{% if errors.room_number %}input-error{% endif %}">
+            {% if errors.room_number %}
+                <p class="error-text">{{ errors.room_number }}</p>
+            {% endif %}
+        </div>
+
+        <!-- RENT AMOUNT -->
+        <div class="form-group">
+            <label>Rent Amount (₹)</label>
+            <input type="number"
+                   name="rent_amount"
+                   value="{{ form_data.rent_amount }}"
+                   class="{% if errors.rent_amount %}input-error{% endif %}">
+            {% if errors.rent_amount %}
+                <p class="error-text">{{ errors.rent_amount }}</p>
+            {% endif %}
+        </div>
+
+        <!-- LOCATION -->
+        <div class="form-group">
+            <label>Location</label>
+            <input type="text"
+                   name="location"
+                   value="{{ form_data.location }}"
+                   class="{% if errors.location %}input-error{% endif %}">
+            {% if errors.location %}
+                <p class="error-text">{{ errors.location }}</p>
+            {% endif %}
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description"
+                      class="{% if errors.description %}input-error{% endif %}">{{ form_data.description }}</textarea>
+            {% if errors.description %}
+                <p class="error-text">{{ errors.description }}</p>
+            {% endif %}
+        </div>
+
+        <!-- ROOM IMAGE -->
+        <div class="form-group">
+            <label>Room Image</label>
+            <input type="file"
+                   name="image"
+                   class="{% if errors.image %}input-error{% endif %}">
+            {% if errors.image %}
+                <p class="error-text">{{ errors.image }}</p>
+            {% endif %}
+            <small>Upload a clear room image (JPG / PNG)</small>
+        </div>
+
+        <!-- BUTTONS -->
+        <button type="submit" class="submit-btn">Add Room</button>
+        <button type="button" class="submit-btn" id="backBtn">Back</button>
+
+    </form>
+
+</div>
+
+<script>
+    // Back button
+    document.getElementById("backBtn").onclick = function () {
+        window.location.href = "{% url 'owners:dashboard' %}";
+    };
+</script>
+
+</body>
+</html>

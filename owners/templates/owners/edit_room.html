@@ -1,0 +1,69 @@
+{% extends "rent/base.html" %}
+{% load static %}
+
+{% block title %}Edit Room{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Edit Room</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Room Title</label>
+            <input type="text" name="title"
+                   value="{{ form_data.title }}"
+                   class="{% if errors.title %}input-error{% endif %}">
+            {% if errors.title %}<p class="error-text">{{ errors.title }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description">{{ form_data.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Room Number</label>
+            <input type="text" name="room_number"
+                   value="{{ form_data.room_number }}">
+        </div>
+
+        <div class="form-group">
+            <label>Rent Amount (₹)</label>
+            <input type="number" name="rent_amount"
+                   value="{{ form_data.rent_amount }}"
+                   class="{% if errors.rent_amount %}input-error{% endif %}">
+            {% if errors.rent_amount %}<p class="error-text">{{ errors.rent_amount }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Location</label>
+            <input type="text" name="location"
+                   value="{{ form_data.location }}"
+                   class="{% if errors.location %}input-error{% endif %}">
+            {% if errors.location %}<p class="error-text">{{ errors.location }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="is_available"
+                       {% if form_data.is_available %}checked{% endif %}>
+                Available
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>Change Image</label>
+            <input type="file" name="image">
+        </div>
+
+        <button type="submit" class="submit-btn">Update Room</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rent App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<nav style="background:#333; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+    <h2>{% block navbar_title %}Rent App{% endblock %}</h2>
+
+    <div>
+        {% if request.session.user_id %}
+            <a href="{% url 'accounts:logout' %}"
+               style="color:white; text-decoration:none; background:#d9534f; padding:8px 15px; border-radius:4px;">
+                Logout
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}"
+               style="color:white; text-decoration:none; background:#5cb85c; padding:8px 15px; border-radius:4px;">
+                Login
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+
+<!-- MAIN CONTENT -->
+<main class="page-content">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+{% if request.session.role %}
+<nav class="bottom-nav">
+
+    {% if request.session.role == "owner" %}
+        <a href="{% url 'owners:dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            Home
+        </a>
+
+        <a href="{% url 'owners:room_list' %}" class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Rooms</a>
+
+        <a href="{% url 'owners:tenant_list' %}"
+           class="{% if request.resolver_match.url_name == 'tenant_list' %}active{% endif %}">
+            Tenants
+        </a>
+
+        <a href="{% url 'owners:profile' %}"
+           class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            Profile
+        </a>
+    {% endif %}
+
+    {% if request.session.role == "tenant" %}
+        <a href="{% url 'tenants:dashboard' %}">Home</a>
+        <a href="{% url 'tenants:profile' %}">Profile</a>
+    {% endif %}
+
+</nav>
+{% endif %}
+
+</body>
+</html>
