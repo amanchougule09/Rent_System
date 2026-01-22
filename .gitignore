@@ -1,5 +1,15 @@
-# Default ignored files
+# IDE junk
 /shelf/
-/workspace.xml
+workspace.xml
+
+# Python
 __pycache__/
-sqlite3.db
+*.pyc
+
+# Django
+db.sqlite3
+media/
+
+# IDEs
+.idea/
+.vscode/
