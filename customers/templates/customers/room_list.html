@@ -4,6 +4,7 @@
 {% block title %}Rooms{% endblock %}
 
 {% block content %}
+<input type="text" name="location" placeholder="Search by location e.g. Mumbai" id="locationSearch">
 <h2>Available Rooms</h2>
 <div class="room-grid">
 {% for room in rooms %}
