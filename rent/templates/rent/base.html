@@ -10,35 +10,8 @@
 </head>
 <body>
 
-<!-- TOP NAVBAR -->
-<nav style="background:#333; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+<nav>
     <h2>{% block navbar_title %}Rent App{% endblock %}</h2>
-
-    <div>
-        {% if request.session.user_id %}
-            <a href="{% url 'accounts:logout' %}"
-               style="color:white; text-decoration:none; background:#d9534f; padding:8px 15px; border-radius:4px;">
-                Logout
-            </a>
-        {% else %}
-            <a href="{% url 'accounts:login' %}"
-               style="color:white; text-decoration:none; background:#5cb85c; padding:8px 15px; border-radius:4px;">
-                Login
-            </a>
-        {% endif %}
-    </div>
-</nav>
-
-
-<!-- MAIN CONTENT -->
-<main class="page-content">
-    {% block content %}{% endblock %}
-</main>
-
-<!-- BOTTOM NAVIGATION -->
-{% if request.session.role %}
-<nav class="bottom-nav">
-
     {% if request.session.role == "owner" %}
         <a href="{% url 'owners:dashboard' %}"
            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
@@ -62,8 +35,28 @@
         <a href="{% url 'tenants:dashboard' %}">Home</a>
         <a href="{% url 'tenants:profile' %}">Profile</a>
     {% endif %}
-
+    <div>
+        {% if request.session.user_id %}
+            <a href="{% url 'accounts:logout' %}">
+                Logout
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">
+                Login
+            </a>
+        {% endif %}
+    </div>
 </nav>
+
+
+<!-- MAIN CONTENT -->
+<main class="page-content">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+{% if request.session.role %}
+
 {% endif %}
 
 </body>
