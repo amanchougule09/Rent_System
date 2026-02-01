@@ -6,38 +6,38 @@
     <link rel="stylesheet" href="{% static 'rent/style.css' %}">
 </head>
 <body>
+<div class="auth-wrapper">
+    <div class="register-container login-container">
+        <h1>Create Owner Account</h1>
 
-<div class="register-container">
-    <h1>Create Owner Account</h1>
+        <form method="POST" class="register-form">
+            {% csrf_token %}
 
-    <form method="POST" class="register-form">
-        {% csrf_token %}
+            <input type="text"
+                name="mobile"
+                placeholder="Mobile Number"
+                pattern="[6-9][0-9]{9}"
+                required>
 
-        <input type="text"
-               name="mobile"
-               placeholder="Mobile Number"
-               pattern="[6-9][0-9]{9}"
-               required>
-
-        <input type="password"
+            <input type="password"
                name="password"
                placeholder="Password"
                required>
 
-        <button type="submit" class="submit-btn">
-            Register
-        </button>
-    </form>
+            <button type="submit" class="submit-btn">
+                Register
+            </button>
+        </form>
 
-    {% if error %}
-        <p class="error-text">{{ error }}</p>
-    {% endif %}
+        {% if error %}
+            <p class="error-text">{{ error }}</p>
+        {% endif %}
 
-    <p class="switch-link">
-        Already registered?
-        <a href="{% url 'accounts:login' %}">Login</a>
-    </p>
+        <p class="switch-link">
+            Already registered?
+            <a href="{% url 'accounts:login' %}">Login</a>
+        </p>
+    </div>
 </div>
-
 </body>
 </html>

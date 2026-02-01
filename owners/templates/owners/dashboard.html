@@ -1,49 +1,64 @@
 {% extends "rent/base.html" %}
-{% block title %}Owner Dashboard{% endblock %}
-
 {% block content %}
 
-<div class="home-container">
-
-    <div class="section-title">Overview</div>
-
-    <div class="stats-grid">
-        <div class="stat-box">
-            <h3>{{ total }}</h3>
-            <p>Total Tenants</p>
-        </div>
-
-        <div class="stat-box">
-            <h3>{{ paid }}</h3>
-            <p>Paid</p>
-        </div>
-
-        <div class="stat-box">
-            <h3>{{ unpaid }}</h3>
-            <p>Unpaid</p>
-        </div>
-
-        <div class="stat-box overdue">
-            <h3>{{ overdue }}</h3>
-            <p>Overdue</p>
-        </div>
-    </div>
-
-    {% if next_due %}
-    <div class="section-title">Next Due</div>
-    <div class="next-due-box">
-        <h3>{{ next_due.name }}</h3>
-        <p>Amount: ₹{{ next_due.amount }}</p>
-        <p>Due Date: {{ next_due.due_date }}</p>
-    </div>
-    {% endif %}
-
-    <div class="quick-actions">
-        <a href="{% url 'owners:add_tenant' %}" class="quick-btn">Add Tenant</a>
-        <a href="{% url 'owners:tenant_list' %}" class="quick-btn">View Tenants</a>
-        
-    </div>
+<div class="dashboard-grid">
+    <h1 class="page-title">Owner Dashboard</h1>
     
+    <div class="stats-container">
+        <div class="stat-card">
+            <p class="stat-label">Total Rent Collected</p>
+            <h3>₹2,45,000</h3>
+            <span class="status-pill green">Rent Collected</span>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Occupancy Rate</p>
+            <h3>85%</h3>
+            <div class="progress-bar"><div class="progress" style="width: 85%"></div></div>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Pending Payments</p>
+            <h3>3 Tenants</h3>
+            <span class="status-pill red">For 3 Tenants</span>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Upcoming Rent Due</p>
+            <h3>₹36,000</h3>
+            <span class="status-pill blue">Available Now</span>
+        </div>
+    </div>
+
+    <div class="bottom-sections">
+        <div class="activity-section">
+            <h2 class="section-subtitle">Recent Activities</h2>
+            <div class="activity-table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Status</th>
+                            <th>Rent Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Rajesh Sharma <br><small>Location • 3 days ago</small></td>
+                            <td><span class="status-pill green">Occupied</span></td>
+                            <td><span class="circular-chart">80%</span></td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <h2 class="section-subtitle">Quick Action</h2>
+            <div class="action-card">
+                <a href="#" class="action-item">Add Tenant</a>
+                <a href="#" class="action-item">Add Room</a>
+                <a href="#" class="action-item">View Reports</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

@@ -1,69 +1,88 @@
 {% extends "rent/base.html" %}
 {% load static %}
 
-{% block title %}Edit Room{% endblock %}
+{% block title %}Edit Room | Rental Manago{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h1>Edit Room Details</h1>
+    <p>Update information for <strong>Room {{ form_data.room_number }}</strong>.</p>
+</div>
 
-<div class="form-container">
-
-    <h2>Edit Room</h2>
-
-    <form method="POST" enctype="multipart/form-data">
+<div class="card-style form-container-centered">
+    <form method="POST" enctype="multipart/form-data" class="modern-form">
         {% csrf_token %}
 
-        <div class="form-group">
-            <label>Room Title</label>
-            <input type="text" name="title"
-                   value="{{ form_data.title }}"
-                   class="{% if errors.title %}input-error{% endif %}">
-            {% if errors.title %}<p class="error-text">{{ errors.title }}</p>{% endif %}
+        <div class="form-row">
+            <div class="form-group">
+                <label>Room Title</label>
+                <input type="text" name="title" 
+                       value="{{ form_data.title }}"
+                       placeholder="e.g. Deluxe Single Room"
+                       class="{% if errors.title %}input-error{% endif %}">
+                {% if errors.title %}<p class="error-text">{{ errors.title }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Room Number</label>
+                <input type="text" name="room_number" 
+                       value="{{ form_data.room_number }}"
+                       placeholder="e.g. A-101">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Rent Amount (₹)</label>
+                <input type="number" name="rent_amount" 
+                       value="{{ form_data.rent_amount }}"
+                       placeholder="5000"
+                       class="{% if errors.rent_amount %}input-error{% endif %}">
+                {% if errors.rent_amount %}<p class="error-text">{{ errors.rent_amount }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" 
+                       value="{{ form_data.location }}"
+                       placeholder="e.g. Powai, Mumbai"
+                       class="{% if errors.location %}input-error{% endif %}">
+                {% if errors.location %}<p class="error-text">{{ errors.location }}</p>{% endif %}
+            </div>
         </div>
 
         <div class="form-group">
             <label>Description</label>
-            <textarea name="description">{{ form_data.description }}</textarea>
+            <textarea name="description" rows="3" placeholder="Describe the amenities...">{{ form_data.description }}</textarea>
         </div>
 
-        <div class="form-group">
-            <label>Room Number</label>
-            <input type="text" name="room_number"
-                   value="{{ form_data.room_number }}">
-        </div>
-
-        <div class="form-group">
-            <label>Rent Amount (₹)</label>
-            <input type="number" name="rent_amount"
-                   value="{{ form_data.rent_amount }}"
-                   class="{% if errors.rent_amount %}input-error{% endif %}">
-            {% if errors.rent_amount %}<p class="error-text">{{ errors.rent_amount }}</p>{% endif %}
-        </div>
-
-        <div class="form-group">
-            <label>Location</label>
-            <input type="text" name="location"
-                   value="{{ form_data.location }}"
-                   class="{% if errors.location %}input-error{% endif %}">
-            {% if errors.location %}<p class="error-text">{{ errors.location }}</p>{% endif %}
-        </div>
-
-        <div class="form-group">
-            <label>
-                <input type="checkbox" name="is_available"
-                       {% if form_data.is_available %}checked{% endif %}>
-                Available
+        <div class="form-group checkbox-group">
+            <label class="switch-container">
+                <input type="checkbox" name="is_available" {% if form_data.is_available %}checked{% endif %}>
+                <span class="switch-label">Room is currently available for rent</span>
             </label>
         </div>
 
-        <div class="form-group">
-            <label>Change Image</label>
-            <input type="file" name="image">
+        <div class="form-group image-edit-section">
+            <label>Room Image</label>
+            <div class="edit-image-preview">
+                {% if room.image %}
+                    <div class="current-img">
+                        <small>Current Image:</small>
+                        <img src="{{ room.image.url }}" alt="Current Room">
+                    </div>
+                {% endif %}
+                <div class="file-upload-wrapper">
+                    <input type="file" name="image" id="roomImage">
+                    <p class="help-text">Upload a new image to replace the current one.</p>
+                </div>
+            </div>
         </div>
 
-        <button type="submit" class="submit-btn">Update Room</button>
-
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Update Room</button>
+            <a href="{% url 'owners:room_list' %}" class="btn-outline">Cancel</a>
+        </div>
     </form>
-
 </div>
-
 {% endblock %}

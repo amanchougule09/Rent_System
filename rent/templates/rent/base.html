@@ -4,44 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Rent App{% endblock %}</title>
+    <title>{% block title %}Rental Manago{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'rent/style.css' %}">
 </head>
-<body>
+<body class="dashboard-body">
 
-<nav class="navbar">
-    <div class="nav-brand">
-        <a href="/" class="brand-link">
-            <img src="{% static 'rent/LOGO.png' %}" alt="Logo" class="nav-logo"> 
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <img src="{% static 'rent/LOGO.png' %}" alt="Rental Manago" class="nav-logo">
+    </div>
+
+    <nav class="sidebar-links">
+        <a href="{% url 'owners:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <span class="icon">⊞</span> Dashboard
         </a>
+        <a href="{% url 'owners:room_list' %}" class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">
+            <span class="icon">🏠</span> Rooms
+        </a>
+        <a href="#">
+            <span class="icon">⊕</span> Add Room
+        </a>
+        <a href="#">
+            <span class="icon">⚙</span> Management
+        </a>
+        <a href="{% url 'owners:tenant_list' %}">
+            <span class="icon">👥</span> Tenants
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'accounts:logout' %}">Settings</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
     </div>
+</aside>
 
-    <div class="nav-links">
-        {% if request.session.role == "owner" %}
-            <a href="{% url 'owners:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Home</a>
-            <a href="{% url 'owners:room_list' %}" class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Rooms</a>
-            <a href="{% url 'owners:tenant_list' %}" class="{% if request.resolver_match.url_name == 'tenant_list' %}active{% endif %}">Tenants</a>
-            <a href="{% url 'owners:profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
-        {% endif %}
+<main class="main-content">
+    <header class="top-header">
+        <div class="search-box">
+            <input type="text" placeholder="Search...">
+        </div>
+        <div class="header-user">
+            <span class="notification">🔔</span>
+            <span class="username">User name</span>
+            <div class="user-avatar"></div>
+        </div>
+    </header>
 
-        {% if request.session.role == "tenant" %}
-            <a href="{% url 'tenants:dashboard' %}">Home</a>
-            <a href="{% url 'tenants:profile' %}">Profile</a>
-        {% endif %}
+    <div class="content-padding">
+        {% block content %}{% endblock %}
     </div>
-
-    <div class="nav-auth">
-        {% if request.session.user_id %}
-            <a href="{% url 'accounts:logout' %}" class="btn-nav">Logout</a>
-        {% else %}
-            <a href="{% url 'accounts:login' %}" class="btn-nav login-highlight">Login</a>
-        {% endif %}
-    </div>
-</nav>
-
-<main>
-    {% block content %}{% endblock %}
 </main>
 
 </body>

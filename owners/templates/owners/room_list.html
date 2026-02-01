@@ -1,46 +1,76 @@
 {% extends "rent/base.html" %}
 {% load static %}
 
-{% block title %}Rooms{% endblock %}
+{% block title %}Room Management | Rental Manago{% endblock %}
 
 {% block content %}
-
-<div class="top-bar">
-    <h2>Your Rooms</h2>
-    <a href="{% url 'owners:add_room' %}" class="add-btn">Add Room</a>
+<div class="page-header-flex">
+    <div class="header-left">
+        <h1>Rooms Management</h1>
+        <div class="search-container">
+            <input type="text" id="roomSearch" placeholder="Search by room number or location...">
+        </div>
+    </div>
+    <a href="{% url 'owners:add_room' %}" class="btn-primary">+ Add Room</a>
 </div>
 
-<div class="room-grid">
-
-{% for room in rooms %}
-    <a href="{% url 'owners:room_detail' room.id %}" class="room-link">
-
-        <div class="room-card">
-
+<div class="management-grid">
+    {% for room in rooms %}
+    <div class="room-management-card">
+        <div class="room-img-container">
             {% if room.image %}
-                <img src="{{ room.image.url }}" alt="Room Image">
+                <img src="{{ room.image.url }}" alt="{{ room.room_number }}">
             {% else %}
-                <img src="{% static 'rent/default_room.jpg' %}" alt="Room Image">
+                <img src="{% static 'rent/default_room.jpg' %}" alt="Default Room">
             {% endif %}
-
-            <div class="room-body">
-                <h3>{{ room.title }}</h3>
-                <p class="location">{{ room.location }}</p>
-                <p class="price">₹{{ room.rent_amount }} / month</p>
-
-                {% if room.is_available %}
-                    <span class="badge available">Available</span>
-                {% else %}
-                    <span class="badge occupied">Occupied</span>
-                {% endif %}
+        </div>
+        
+        <div class="room-details">
+            <div class="room-header">
+                <h3>Room {{ room.room_number }} - {{ room.title }}</h3>
+                <p class="location-text"><i class="fas fa-map-marker-alt"></i> {{ room.location }}</p>
+            </div>
+            
+            <div class="room-stats">
+                <p class="rent-text">Rent: <strong>₹{{ room.rent_amount }}/month</strong></p>
+                <p class="status-row">
+                    Status: 
+                    {% if room.is_available %}
+                        <span class="badge available">Available</span>
+                    {% else %}
+                        <span class="badge occupied">Occupied</span>
+                    {% endif %}
+                </p>
             </div>
 
+            <div class="room-actions-row">
+                <a href="{% url 'owners:edit_room' room.id %}" class="btn-action-outline">Edit</a>
+                
+                <form action="{% url 'owners:delete_room' room.id %}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-action-danger">Delete</button>
+                </form>
+
+                <a href="{% url 'owners:room_detail' room.id %}" class="btn-action-success">View Details</a>
+            </div>
         </div>
-
-    </a>
-{% empty %}
-    <p>No rooms added yet</p>
-{% endfor %}
-
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <p>No rooms found. Start by adding your first property.</p>
+    </div>
+    {% endfor %}
 </div>
+
+<script>
+    // Search filter for rooms
+    document.getElementById('roomSearch').addEventListener('keyup', function() {
+        let filter = this.value.toLowerCase();
+        let cards = document.querySelectorAll('.room-management-card');
+        cards.forEach(card => {
+            let text = card.textContent.toLowerCase();
+            card.style.display = text.includes(filter) ? 'flex' : 'none';
+        });
+    });
+</script>
 {% endblock %}

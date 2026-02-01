@@ -1,145 +1,95 @@
+{% extends "rent/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Tenant</title>
-    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
-</head>
+{% block title %}Add Tenant | Rental Manago{% endblock %}
 
-<body>
+{% block content %}
+<div class="page-header">
+    <h1>Add Tenant</h1>
+</div>
 
-<div class="form-container">
-
-    <h2>Add Tenant</h2>
-
-    <form method="POST">
+<div class="card-style form-container-centered small-width">
+    <form method="POST" class="modern-form">
         {% csrf_token %}
 
-        <!-- NAME -->
         <div class="form-group">
-            <label>Name</label>
-            <input type="text"
-                   name="name"
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Full Name"
                    value="{{ form_data.name }}"
                    class="{% if errors.name %}input-error{% endif %}">
-            {% if errors.name %}
-                <p class="error-text">{{ errors.name }}</p>
-            {% endif %}
+            {% if errors.name %}<p class="error-text">{{ errors.name }}</p>{% endif %}
         </div>
 
-        <!-- MOBILE -->
         <div class="form-group">
             <label>Mobile Number</label>
-            <input type="text"
-                   name="mobile"
+            <input type="text" name="mobile" placeholder="+91 98765 43210"
                    value="{{ form_data.mobile }}"
                    class="{% if errors.mobile %}input-error{% endif %}">
-            {% if errors.mobile %}
-                <p class="error-text">{{ errors.mobile }}</p>
-            {% endif %}
+            {% if errors.mobile %}<p class="error-text">{{ errors.mobile }}</p>{% endif %}
         </div>
 
-        <!-- AMOUNT -->
         <div class="form-group">
-            <label>Amount</label>
-            <input type="number"
-                   name="amount"
+            <label>Rent Amount</label>
+            <input type="number" name="amount" placeholder="₹ Amount"
                    value="{{ form_data.amount }}"
                    class="{% if errors.amount %}input-error{% endif %}">
-            {% if errors.amount %}
-                <p class="error-text">{{ errors.amount }}</p>
-            {% endif %}
+            {% if errors.amount %}<p class="error-text">{{ errors.amount }}</p>{% endif %}
         </div>
 
-                <!-- SECURITY DEPOSIT -->
         <div class="form-group">
             <label>Security Deposit</label>
-            <input type="number"
-                   name="security_deposit"
-                   step="0.01"
-                   min="0"
+            <input type="number" name="security_deposit" step="0.01" min="0"
+                   placeholder="₹ Deposit (Optional)"
                    value="{{ form_data.security_deposit|default:'0.00' }}"
                    class="{% if errors.security_deposit %}input-error{% endif %}">
-            {% if errors.security_deposit %}
-                <p class="error-text">{{ errors.security_deposit }}</p>
-            {% endif %}
-            <small>Leave 0 if none. Date will be captured automatically.</small>
+            {% if errors.security_deposit %}<p class="error-text">{{ errors.security_deposit }}</p>{% endif %}
         </div>
 
-        <!-- DUE TYPE -->
         <div class="form-group">
-            <label>Due Type</label>
-            <select name="due_type"
-                    id="dueTypeSelect"
+            <label>Rent Collection Type</label>
+            <select name="due_type" id="dueTypeSelect"
                     class="{% if errors.due_type %}input-error{% endif %}">
-                
-                <option value="">Select Due Type</option>
-
-                <option value="fixed"
-                        {% if form_data.due_type == 'fixed' %}selected{% endif %}>
-                    Fixed Due Date
-                </option>
-
-                <option value="cycle"
-                        {% if form_data.due_type == 'cycle' %}selected{% endif %}>
-                    30 Days Cycle
-                </option>
-
+                <option value="fixed" {% if form_data.due_type == 'fixed' %}selected{% endif %}>Fixed Monthly Date</option>
+                <option value="cycle" {% if form_data.due_type == 'cycle' %}selected{% endif %}>30 Days Cycle</option>
             </select>
-
-            {% if errors.due_type %}
-                <p class="error-text">{{ errors.due_type }}</p>
-            {% endif %}
         </div>
 
-        <!-- FIXED DUE DATE -->
-        <div class="form-group"
-             id="fixedDateBox">
-            <label>Due Date</label>
-            <input type="date"
-                   name="due_date"
+        <div class="form-group" id="fixedDateBox">
+            <label id="dateLabel">Lease Start Date</label>
+            <input type="date" name="due_date"
                    value="{{ form_data.due_date }}"
                    class="{% if errors.due_date %}input-error{% endif %}">
-            
-            {% if errors.due_date %}
-                <p class="error-text">{{ errors.due_date }}</p>
-            {% endif %}
+            {% if errors.due_date %}<p class="error-text">{{ errors.due_date }}</p>{% endif %}
         </div>
 
-        <button type="submit" class="submit-btn">Add Tenant</button>
-        <button type="button" class="submit-btn" id="backBtn">Back</button>
-
+        <div class="form-actions-full">
+            <button type="submit" class="btn-primary btn-block">Submit</button>
+            <button type="button" class="btn-text" id="backBtn">Back to List</button>
+        </div>
     </form>
-
 </div>
 
 <script>
-    // Get references
     const dueTypeSelect = document.getElementById("dueTypeSelect");
     const fixedDateBox = document.getElementById("fixedDateBox");
+    const dateLabel = document.getElementById("dateLabel");
 
-    // Function to toggle visibility
-    function toggleDueDateBox() {
+    function updateFormUI() {
         if (dueTypeSelect.value === "cycle") {
-            fixedDateBox.style.display = "none";
+            // In a 30-day cycle, the date usually represents the start date
+            dateLabel.innerText = "Cycle Start Date";
+            fixedDateBox.style.display = "block"; 
         } else {
+            dateLabel.innerText = "Monthly Due Date";
             fixedDateBox.style.display = "block";
         }
     }
 
-    // Run once on page load
-    toggleDueDateBox();
+    dueTypeSelect.addEventListener("change", updateFormUI);
+    window.onload = updateFormUI;
 
-    // Run whenever the select changes
-    dueTypeSelect.addEventListener("change", toggleDueDateBox);
-
-    // Back button
     document.getElementById("backBtn").onclick = function() {
-        window.location.href = "{% url 'owners:dashboard' %}";
+        window.location.href = "{% url 'owners:tenant_list' %}";
     };
 </script>
-
-
-</body>
-</html>
+{% endblock %}

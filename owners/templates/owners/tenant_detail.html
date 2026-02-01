@@ -1,89 +1,117 @@
 {% extends "rent/base.html" %}
+{% load static %}
 
-{% block title %}Tenant Detail{% endblock %}
-{% block navbar_title %}Tenant{% endblock %}
+{% block title %}Tenant Profile | Rental Manago{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>{{ tenant.name }}</h2>
-
-    <p><strong>Mobile:</strong> {{ tenant.mobile }}</p>
-    <p><strong>Amount:</strong> ₹{{ tenant.amount }}</p>
-    <p><strong>Due Type:</strong> {{ tenant.due_type }}</p>
-
-    {% if tenant.due_type == "fixed" %}
-        <p><strong>Due Date:</strong> {{ tenant.due_date|date:"d M Y" }}</p>
-    {% else %}
-        <p><strong>Due Date:</strong> 30 Days Cycle</p>
-    {% endif %}
-
-    <p><strong>Paid:</strong> {{ tenant.paid }}</p>
-
-    <hr>
-
-    <!-- NEW FIELDS FROM YOUR MODEL -->
-    <p><strong>Security Deposit:</strong> ₹{{ tenant.security_deposit }}</p>
-
-    <p><strong>Deposit Date:</strong> 
-        {{ tenant.security_deposit_date|date:"d M Y" }}
-    </p>
-
-    <p><strong>Room Number:</strong> 
-        {% if tenant.room_number %}
-            {{ tenant.room_number }}
-        {% else %}
-            -
-        {% endif %}
-    </p>
-
-    <p><strong>Image:</strong></p>
-    <img src="{{ tenant.image }}" alt="Tenant Image" style="width:120px; border-radius:10px;">
-
-    <hr>
-    <h3>Rent Payment</h3>
-
-    <p>
-        <strong>Status:</strong>
-        {% if tenant.paid %}
-            <span style="color:green;">Paid</span>
-        {% else %}
-            <span style="color:red;">Unpaid</span>
-        {% endif %}
-    </p>
-
-    {% if tenant.payment_date %}
-        <p><strong>Paid On:</strong> {{ tenant.payment_date|date:"d M Y" }}</p>
-    {% endif %}
-
-    {% if not tenant.paid %}
-        <form method="POST" action="{% url 'owners:mark_paid' tenant.id %}">
-            {% csrf_token %}
-            <button class="add-btn">Mark as Paid</button>
-        </form>
-    {% else %}
-        <form method="POST" action="{% url 'owners:mark_unpaid' tenant.id %}">
-            {% csrf_token %}
-            <button class="delete-btn">Mark Unpaid (Next Month)</button>
-        </form>
-    {% endif %}
-
-
-    <br>
-    <button class="submit-btn" id="backBtn">Back</button>
-    <button class="delete-btn" id="deleteBtn">Delete Tenant</button>
+<div class="page-header-flex">
+    <div class="header-left">
+        <a href="{% url 'owners:tenant_list' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Tenants</a>
+        <h1>Tenant Profile</h1>
+    </div>
+    <div class="header-actions">
+        <button class="btn-outline-danger" id="deleteBtn">
+            <i class="fas fa-user-minus"></i> Remove Tenant
+        </button>
+    </div>
 </div>
+
+<div class="profile-grid">
+    <div class="profile-main">
+        <div class="card-style profile-header-card">
+            <div class="tenant-profile-top">
+                <img src="{{ tenant.image|default:'/static/rent/default.png' }}" class="tenant-large-avatar">
+                <div class="tenant-main-info">
+                    <h2>{{ tenant.name }}</h2>
+                    <p class="text-muted"><i class="fas fa-phone"></i> {{ tenant.mobile }}</p>
+                    <div class="badge-row">
+                        <span class="badge {% if tenant.paid %}available{% else %}occupied{% endif %}">
+                            {{ tenant.paid|yesno:"Paid,Unpaid" }}
+                        </span>
+                        {% if tenant.room_number %}
+                            <span class="badge info">Room: {{ tenant.room_number }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-style mt-20">
+            <h3>Lease & Room Details</h3>
+            <div class="info-grid mt-15">
+                <div class="info-item">
+                    <label>Assigned Room</label>
+                    <p>{{ tenant.room_number|default:"Not Assigned" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Monthly Rent</label>
+                    <p>₹{{ tenant.amount }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Due Cycle</label>
+                    <p>{{ tenant.due_type|title }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Next Due Date</label>
+                    <p>
+                        {% if tenant.due_type == "fixed" %}
+                            {{ tenant.due_date|date:"d M Y" }}
+                        {% else %}
+                            30 Days Cycle
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-sidebar">
+        <div class="card-style status-card">
+            <h3>Payment Status</h3>
+            <div class="payment-display">
+                {% if tenant.paid %}
+                    <div class="status-icon-box success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="status-text success">Rent for this month is paid.</p>
+                    {% if tenant.payment_date %}
+                        <small>Received on: {{ tenant.payment_date|date:"d M Y" }}</small>
+                    {% endif %}
+                    <form method="POST" action="{% url 'owners:mark_unpaid' tenant.id %}" class="mt-20">
+                        {% csrf_token %}
+                        <button class="btn-outline btn-block">Reset for Next Month</button>
+                    </form>
+                {% else %}
+                    <div class="status-icon-box danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <p class="status-text danger">Rent is currently pending.</p>
+                    <form method="POST" action="{% url 'owners:mark_paid' tenant.id %}" class="mt-20">
+                        {% csrf_token %}
+                        <button class="btn-primary btn-block">Mark as Paid</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-style mt-20">
+            <h3>Security Deposit</h3>
+            <div class="deposit-info">
+                <h2 class="price-text">₹{{ tenant.security_deposit }}</h2>
+                <p class="text-small">Received: {{ tenant.security_deposit_date|date:"d M Y" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
 
 {% block scripts %}
 <script>
-document.getElementById("backBtn").onclick = function() {
-    window.location.href = "{% url 'owners:tenant_list' %}";
-};
-
-document.getElementById("deleteBtn").onclick = function() {
-    if (confirm("Are you sure you want to delete this tenant?")) {
-        window.location.href = "{% url 'owners:delete_tenant' tenant.id %}";
-    }
-};
+    document.getElementById("deleteBtn").onclick = function() {
+        if (confirm("Are you sure you want to delete this tenant? This action cannot be undone.")) {
+            window.location.href = "{% url 'owners:delete_tenant' tenant.id %}";
+        }
+    };
 </script>
-{% endblock %}
 {% endblock %}

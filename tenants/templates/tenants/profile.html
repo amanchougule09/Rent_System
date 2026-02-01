@@ -1,17 +1,77 @@
 {% extends "rent/base.html" %}
-{% block title %}My Profile{% endblock %}
+{% load static %}
+
+{% block title %}My Profile | Rental Manago{% endblock %}
 
 {% block content %}
-
-<div class="form-container">
-
-<h2>My Profile</h2>
-
-<p><b>Name:</b> {{ tenant.name }}</p>
-<p><b>Mobile:</b> {{ tenant.mobile }}</p>
-<p><b>Owner Contact:</b> {{ tenant.owner_mobile }}</p>
-<p><b>Security Deposit:</b> ₹{{ tenant.security_deposit }}</p>
-
+<div class="page-header">
+    <h1>Account Settings</h1>
+    <p>Manage your profile and find contact information for your landlord.</p>
 </div>
 
+<div class="profile-layout">
+    <div class="card-style profile-info-card">
+        <div class="profile-header-main">
+            <div class="avatar-large">
+                {% if tenant.image %}
+                    <img src="{{ tenant.image }}" alt="Profile">
+                {% else %}
+                    <span>{{ tenant.name|slice:":1" }}</span>
+                {% endif %}
+            </div>
+            <div class="profile-titles">
+                <h2>{{ tenant.name }}</h2>
+                <span class="badge available">Tenant Account</span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Full Name</label>
+                <p>{{ tenant.name }}</p>
+            </div>
+            <div class="info-item">
+                <label>Mobile Number</label>
+                <p>{{ tenant.mobile }}</p>
+            </div>
+            <div class="info-item">
+                <label>Security Deposit</label>
+                <p>₹{{ tenant.security_deposit }}</p>
+            </div>
+            <div class="info-item">
+                <label>Residency Status</label>
+                <p>Active</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-sidebar-group">
+        <div class="card-style contact-card">
+            <h3><i class="fas fa-headset"></i> Landlord Contact</h3>
+            <p class="text-muted">Need help with the property? Reach out to your owner.</p>
+            
+            <div class="contact-box-mini">
+                <div class="contact-detail">
+                    <small>Owner Mobile</small>
+                    <p><strong>{{ tenant.owner_mobile }}</strong></p>
+                </div>
+                <a href="tel:{{ tenant.owner_mobile }}" class="btn-primary-small">
+                    <i class="fas fa-phone-alt"></i> Call Now
+                </a>
+            </div>
+        </div>
+
+        <div class="card-style mt-20">
+            <h3>Security</h3>
+            <div class="action-list-mini">
+                <a href="{% url 'accounts:change_password' %}" class="action-item-simple">
+                    <i class="fas fa-lock"></i> Change Password
+                </a>
+                <a href="{% url 'accounts:logout' %}" class="action-item-simple text-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

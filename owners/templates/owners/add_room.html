@@ -1,105 +1,100 @@
+{% extends "rent/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Room</title>
-    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
-</head>
+{% block title %}Owner Dashboard | Rental Manago{% endblock %}
 
-<body>
-
-<div class="form-container">
-
-    <h2>Add Room</h2>
-
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <!-- ROOM TITLE -->
-        <div class="form-group">
-            <label>Room Title</label>
-            <input type="text"
-                   name="title"
-                   value="{{ form_data.title }}"
-                   class="{% if errors.title %}input-error{% endif %}">
-            {% if errors.title %}
-                <p class="error-text">{{ errors.title }}</p>
-            {% endif %}
-        </div>
-
-        <!-- ROOM NUMBER -->
-        <div class="form-group">
-            <label>Room Number</label>
-            <input type="text"
-                   name="room_number"
-                   value="{{ form_data.room_number }}"
-                   class="{% if errors.room_number %}input-error{% endif %}">
-            {% if errors.room_number %}
-                <p class="error-text">{{ errors.room_number }}</p>
-            {% endif %}
-        </div>
-
-        <!-- RENT AMOUNT -->
-        <div class="form-group">
-            <label>Rent Amount (₹)</label>
-            <input type="number"
-                   name="rent_amount"
-                   value="{{ form_data.rent_amount }}"
-                   class="{% if errors.rent_amount %}input-error{% endif %}">
-            {% if errors.rent_amount %}
-                <p class="error-text">{{ errors.rent_amount }}</p>
-            {% endif %}
-        </div>
-
-        <!-- LOCATION -->
-        <div class="form-group">
-            <label>Location</label>
-            <input type="text"
-                   name="location"
-                   value="{{ form_data.location }}"
-                   class="{% if errors.location %}input-error{% endif %}">
-            {% if errors.location %}
-                <p class="error-text">{{ errors.location }}</p>
-            {% endif %}
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div class="form-group">
-            <label>Description</label>
-            <textarea name="description"
-                      class="{% if errors.description %}input-error{% endif %}">{{ form_data.description }}</textarea>
-            {% if errors.description %}
-                <p class="error-text">{{ errors.description }}</p>
-            {% endif %}
-        </div>
-
-        <!-- ROOM IMAGE -->
-        <div class="form-group">
-            <label>Room Image</label>
-            <input type="file"
-                   name="image"
-                   class="{% if errors.image %}input-error{% endif %}">
-            {% if errors.image %}
-                <p class="error-text">{{ errors.image }}</p>
-            {% endif %}
-            <small>Upload a clear room image (JPG / PNG)</small>
-        </div>
-
-        <!-- BUTTONS -->
-        <button type="submit" class="submit-btn">Add Room</button>
-        <button type="button" class="submit-btn" id="backBtn">Back</button>
-
-    </form>
-
+{% block content %}
+<div class="page-header-flex">
+    <h1>Owner Dashboard</h1>
+    <a href="{% url 'owners:add_room' %}" class="btn-primary">+ Add Room</a>
 </div>
 
-<script>
-    // Back button
-    document.getElementById("backBtn").onclick = function () {
-        window.location.href = "{% url 'owners:dashboard' %}";
-    };
-</script>
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <p>Total Rent Collected</p>
+            <span class="icon-bg green"><i class="fas fa-wallet"></i></span>
+        </div>
+        <h2>₹2,45,000</h2> <span class="stat-tag green">Rent Gathered</span>
+    </div>
 
-</body>
-</html>
+    <div class="stat-card">
+        <div class="stat-header">
+            <p>Occupancy Rate</p>
+            <span class="icon-bg blue"><i class="fas fa-door-open"></i></span>
+        </div>
+        <h2>85%</h2> <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 85%;"></div>
+        </div>
+        <span class="stat-tag blue">Occupied Now</span>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <p>Pending Payments</p>
+            <span class="icon-bg red"><i class="fas fa-exclamation-circle"></i></span>
+        </div>
+        <h2>{{ unpaid }} Tenants</h2>
+        <span class="stat-tag red">Past Due</span>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <p>Upcoming Rent Due</p>
+            <span class="icon-bg orange"><i class="fas fa-clock"></i></span>
+        </div>
+        <h2>₹36,000</h2>
+        <span class="stat-tag orange">Available Now</span>
+    </div>
+</div>
+
+<div class="dashboard-main-layout">
+    <div class="card-style recent-activity">
+        <h3>Recent Activities</h3>
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Status</th>
+                    <th>Rent Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="avatar-circle">RS</div>
+                            <div>
+                                <p class="user-name">Rajesh Sharma</p>
+                                <p class="user-meta">Lease start • 2 days ago</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge occupied">Occupied</span></td>
+                    <td><div class="circular-progress" data-percent="80">80%</div></td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
+
+    <div class="quick-actions-sidebar">
+        <div class="card-style">
+            <h3>Quick Action</h3>
+            <div class="action-list">
+                <a href="{% url 'owners:add_tenant' %}" class="action-item">
+                    <span class="action-icon"><i class="fas fa-user-plus"></i></span>
+                    Add Tenant
+                </a>
+                <a href="{% url 'owners:add_room' %}" class="action-item">
+                    <span class="action-icon"><i class="fas fa-bed"></i></span>
+                    Add Room
+                </a>
+                <a href="#" class="action-item">
+                    <span class="action-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                    View Reports
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

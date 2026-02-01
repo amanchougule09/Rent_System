@@ -1,43 +1,83 @@
 {% extends "rent/base.html" %}
 {% load static %}
 
-{% block title %}My Tenants{% endblock %}
+{% block title %}Tenant Management | Rental Manago{% endblock %}
 
 {% block content %}
-
-<div class="top-bar">
-    <h2>Tenants</h2>
-    <a href="{% url 'owners:add_tenant' %}" class="add-btn">Add Tenants</a>
+<div class="page-header-flex">
+    <div class="header-left">
+        <h1>Tenant Management</h1>
+        <div class="search-container">
+            <input type="text" id="tenantSearch" placeholder="Search tenants...">
+        </div>
+    </div>
+    <a href="{% url 'owners:add_tenant' %}" class="btn-primary">+ Add Tenant</a>
 </div>
 
-<div class="tenant-list">
-
-    {% for tenant in tenants %}
-    <a href="{% url 'owners:tenant_detail' tenant.id %}" class="tenant-card">
-
-        <img src="{% static 'rent/default.png' %}" class="avatar">
-
-        <div class="tenant-info">
-            <div class="name-amount">
-                <h3>{{ tenant.name }}</h3>
-                <p class="amount">₹{{ tenant.amount }}</p>
-            </div>
-            <p class="due">Due: {{ tenant.due_date|default:"30 Days Cycle" }}</p>
-        </div>
-
-        <div class="tenant-right">
-            {% if tenant.paid %}
-                <p class="paid">Paid</p>
-            {% else %}
-                <p class="unpaid">Unpaid</p>
-            {% endif %}
-        </div>
-
-    </a>
-    {% empty %}
-        <p>No tenants yet.</p>
-    {% endfor %}
-
+<div class="card-style no-padding">
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th>Tenant Name</th>
+                <th>Mobile Number</th>
+                <th>Rent Amount</th>
+                <th>Payment Status</th>
+                <th>Assigned Room</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tenantTableBody">
+            {% for tenant in tenants %}
+            <tr>
+                <td>
+                    <div class="user-cell">
+                        <img src="{% static 'rent/default.png' %}" class="avatar-small">
+                        <span>{{ tenant.name }}</span>
+                    </div>
+                </td>
+                <td>{{ tenant.user.mobile }}</td>
+                <td>₹{{ tenant.amount }}/month</td>
+                <td>
+                    {% if tenant.paid %}
+                        <span class="badge available">Paid</span>
+                    {% else %}
+                        <span class="badge occupied">Unpaid</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if tenant.room %}
+                        {{ tenant.room.room_number }}
+                    {% else %}
+                        <span class="text-muted">Not Assigned</span>
+                    {% endif %}
+                </td>
+                <td class="text-right">
+                    <div class="action-buttons">
+                        {% if not tenant.paid %}
+                            <button class="btn-table-outline">Send Reminder</button>
+                        {% endif %}
+                        <a href="{% url 'owners:tenant_detail' tenant.id %}" class="btn-table-outline">View Details</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-50">No tenants found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
+<script>
+    // Simple filter for the search bar
+    document.getElementById('tenantSearch').addEventListener('keyup', function() {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#tenantTableBody tr');
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
 {% endblock %}

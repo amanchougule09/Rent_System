@@ -1,41 +1,71 @@
 {% extends "rent/base.html" %}
-{% block title %}Owner Profile{% endblock %}
+{% load static %}
+
+{% block title %}My Profile | Rental Manago{% endblock %}
 
 {% block content %}
-
-<div class="home-container">
-
-    <div class="section-title">My Profile</div>
-
-    <div class="stats-grid">
-        <div class="stat-box">
-            <h3>{{ owner.name }}</h3>
-            <p>Name</p>
-        </div>
-
-        <div class="stat-box">
-            <h3>{{ owner.user.mobile }}</h3>
-            <p>Mobile Number</p>
-        </div>
-
-        <div class="stat-box">
-            <h3>{{ owner.user.role|title }}</h3>
-            <p>Role</p>
-        </div>
-    </div>
-
-    <div class="section-title">Account Actions</div>
-
-    <div class="quick-actions">
-        <a href="{% url 'accounts:change_password' %}" class="quick-btn">
-            Change Password
-        </a>
-
-        <a href="{% url 'accounts:logout' %}" class="quick-btn danger">
-            Logout
-        </a>
-    </div>
-
+<div class="page-header">
+    <h1>Account Settings</h1>
+    <p>Manage your personal information and security preferences.</p>
 </div>
 
+<div class="profile-layout">
+    <div class="card-style profile-info-card">
+        <div class="profile-header-main">
+            <div class="avatar-large">
+                {% if owner.profile_pic %}
+                    <img src="{{ owner.profile_pic.url }}" alt="Profile">
+                {% else %}
+                    <span>{{ owner.name|slice:":1" }}</span>
+                {% endif %}
+            </div>
+            <div class="profile-titles">
+                <h2>{{ owner.name }}</h2>
+                <span class="badge available">{{ owner.user.role|title }} Account</span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Full Name</label>
+                <p>{{ owner.name }}</p>
+            </div>
+            <div class="info-item">
+                <label>Mobile Number</label>
+                <p>{{ owner.user.mobile }}</p>
+            </div>
+            <div class="info-item">
+                <label>Email Address</label>
+                <p>{{ owner.user.email|default:"Not provided" }}</p>
+            </div>
+            <div class="info-item">
+                <label>Member Since</label>
+                <p>{{ owner.user.date_joined|date:"F Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-style security-card">
+        <h3>Security & Actions</h3>
+        <p class="text-muted">Update your password or secure your account sessions.</p>
+        
+        <div class="action-list">
+            <a href="{% url 'accounts:change_password' %}" class="action-item">
+                <span class="action-icon"><i class="fas fa-key"></i></span>
+                <div>
+                    <strong>Change Password</strong>
+                    <p class="text-small">Last changed: Recently</p>
+                </div>
+            </a>
+
+            <a href="{% url 'accounts:logout' %}" class="action-item danger-hover">
+                <span class="action-icon text-danger"><i class="fas fa-sign-out-alt"></i></span>
+                <div>
+                    <strong>Logout</strong>
+                    <p class="text-small">End your current session</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
