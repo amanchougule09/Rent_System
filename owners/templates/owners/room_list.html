@@ -7,9 +7,13 @@
 <div class="page-header-flex">
     <div class="header-left">
         <h1>Rooms Management</h1>
-        <div class="search-container">
-            <input type="text" id="roomSearch" placeholder="Search by room number or location...">
-        </div>
+        <form method="GET" class="search-container" style="margin-top: 10px;">
+            <input type="text" name="search" placeholder="Search by room number or location..." value="{{ search }}">
+            <button type="submit" style="padding: 8px 16px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+            {% if search %}
+                <a href="{% url 'owners:room_list' %}" style="padding: 8px 16px; background: #f1f3f4; color: #3c4043; border: 1px solid #dadce0; border-radius: 4px; text-decoration: none;">Clear</a>
+            {% endif %}
+        </form>
     </div>
     <a href="{% url 'owners:add_room' %}" class="btn-primary">+ Add Room</a>
 </div>
@@ -57,20 +61,9 @@
     </div>
     {% empty %}
     <div class="empty-state">
-        <p>No rooms found. Start by adding your first property.</p>
+        <p>No rooms found{% if search %} matching "{{ search }}"{% endif %}. {% if not search %}Start by adding your first property.{% else %}Try a different search.{% endif %}</p>
     </div>
     {% endfor %}
 </div>
 
-<script>
-    // Search filter for rooms
-    document.getElementById('roomSearch').addEventListener('keyup', function() {
-        let filter = this.value.toLowerCase();
-        let cards = document.querySelectorAll('.room-management-card');
-        cards.forEach(card => {
-            let text = card.textContent.toLowerCase();
-            card.style.display = text.includes(filter) ? 'flex' : 'none';
-        });
-    });
-</script>
 {% endblock %}

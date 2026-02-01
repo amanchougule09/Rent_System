@@ -14,7 +14,13 @@ def dashboard(request):
 
 def room_list(request):
     rooms = Room.objects.filter(is_available=True)
-    return render(request, "customers/room_list.html", {"rooms": rooms})
+    
+    # Handle location search
+    location = request.GET.get('location', '').strip()
+    if location:
+        rooms = rooms.filter(location__icontains=location)
+    
+    return render(request, "customers/room_list.html", {"rooms": rooms, "location": location})
 
 
 def room_detail(request, id):

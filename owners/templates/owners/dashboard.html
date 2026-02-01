@@ -7,45 +7,57 @@
     <div class="stats-container">
         <div class="stat-card">
             <p class="stat-label">Total Rent Collected</p>
-            <h3>₹2,45,000</h3>
+            <h3>₹{{ total_rent_collected }}</h3>
             <span class="status-pill green">Rent Collected</span>
         </div>
         <div class="stat-card">
             <p class="stat-label">Occupancy Rate</p>
-            <h3>85%</h3>
-            <div class="progress-bar"><div class="progress" style="width: 85%"></div></div>
+            <h3>{{ occupancy_rate }}%</h3>
+            <div class="progress-bar"><div class="progress" style="width: {{ occupancy_rate }}%"></div></div>
         </div>
         <div class="stat-card">
             <p class="stat-label">Pending Payments</p>
-            <h3>3 Tenants</h3>
-            <span class="status-pill red">For 3 Tenants</span>
+            <h3>{{ unpaid }} Tenants</h3>
+            <span class="status-pill red">For {{ unpaid }} Tenants</span>
         </div>
         <div class="stat-card">
             <p class="stat-label">Upcoming Rent Due</p>
-            <h3>₹36,000</h3>
+            <h3>₹{{ upcoming_rent }}</h3>
             <span class="status-pill blue">Available Now</span>
         </div>
     </div>
 
     <div class="bottom-sections">
         <div class="activity-section">
-            <h2 class="section-subtitle">Recent Activities</h2>
+            <h2 class="section-subtitle">Recent Tenants</h2>
             <div class="activity-table-card">
                 <table>
                     <thead>
                         <tr>
-                            <th>Activity</th>
-                            <th>Status</th>
-                            <th>Rent Status</th>
+                            <th>Tenant Name</th>
+                            <th>Payment Status</th>
+                            <th>Rent Amount</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for tenant in recent_tenants %}
                         <tr>
-                            <td>Rajesh Sharma <br><small>Location • 3 days ago</small></td>
-                            <td><span class="status-pill green">Occupied</span></td>
-                            <td><span class="circular-chart">80%</span></td>
+                            <td>{{ tenant.name }} <br><small>Rent: ₹{{ tenant.amount }}</small></td>
+                            <td>
+                                {% if tenant.paid %}
+                                    <span class="status-pill green">Paid</span>
+                                {% else %}
+                                    <span class="status-pill red">Unpaid</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'owners:tenant_detail' tenant.id %}" style="color: #1a73e8; text-decoration: none;">View</a></td>
                         </tr>
-                        </tbody>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" style="text-align: center;">No tenants yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -53,9 +65,9 @@
         <div class="actions-section">
             <h2 class="section-subtitle">Quick Action</h2>
             <div class="action-card">
-                <a href="#" class="action-item">Add Tenant</a>
-                <a href="#" class="action-item">Add Room</a>
-                <a href="#" class="action-item">View Reports</a>
+                <a href="{% url 'owners:add_tenant' %}" class="action-item">Add Tenant</a>
+                <a href="{% url 'owners:add_room' %}" class="action-item">Add Room</a>
+                <a href="{% url 'owners:management' %}" class="action-item">View Reports</a>
             </div>
         </div>
     </div>

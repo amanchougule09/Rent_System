@@ -1,0 +1,81 @@
+{% extends "rent/base.html" %}
+{% block content %}
+
+<div class="dashboard-grid">
+    <h1 class="page-title">Management Overview</h1>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <p class="stat-label">Total Rooms</p>
+            <h3>{{ total_rooms }}</h3>
+            <span class="status-pill blue">Registered</span>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Available Rooms</p>
+            <h3>{{ available_rooms }}</h3>
+            <span class="status-pill green">Vacant</span>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Occupied Rooms</p>
+            <h3>{{ occupied_rooms }}</h3>
+            <span class="status-pill orange">Occupied</span>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Total Tenants</p>
+            <h3>{{ total_tenants }}</h3>
+            <span class="status-pill purple">Registered</span>
+        </div>
+    </div>
+
+    <div class="bottom-sections">
+        <div class="activity-section">
+            <h2 class="section-subtitle">Payment Status</h2>
+            <div class="activity-table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Paid Tenants</td>
+                            <td><span class="status-pill green">{{ paid_tenants }}</span></td>
+                            <td>
+                                {% if total_tenants > 0 %}
+                                    {{ percent_paid }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Unpaid Tenants</td>
+                            <td><span class="status-pill red">{{ unpaid_tenants }}</span></td>
+                            <td>
+                                {% if total_tenants > 0 %}
+                                    {{ percent_unpaid }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <h2 class="section-subtitle">Quick Links</h2>
+            <div class="action-card">
+                <a href="{% url 'owners:tenant_list' %}" class="action-item">View All Tenants</a>
+                <a href="{% url 'owners:room_list' %}" class="action-item">View All Rooms</a>
+                <a href="{% url 'owners:bookings_list' %}" class="action-item">View Bookings</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

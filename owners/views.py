@@ -27,6 +27,19 @@ def get_owner(request):
 def dashboard(request):
     owner = get_owner(request)
     tenants = Tenant.objects.filter(owner=owner)
+    rooms = Room.objects.filter(owner=owner)
+    paid_tenants = tenants.filter(paid=True)
+    
+    # Calculate total rent collected
+    total_rent_collected = sum([t.amount for t in paid_tenants])
+    
+    # Calculate occupancy rate
+    total_rooms = rooms.count()
+    occupied_rooms = rooms.filter(is_available=False).count()
+    occupancy_rate = (occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0
+    
+    # Calculate upcoming rent due
+    upcoming_rent = sum([t.amount for t in tenants.filter(paid=False)])
 
     context = {
         "total": tenants.count(),
@@ -34,6 +47,10 @@ def dashboard(request):
         "unpaid": tenants.filter(paid=False).count(),
         "overdue": tenants.filter(due_date__lt=date.today(), paid=False).count(),
         "next_due": tenants.order_by("due_date").first(),
+        "total_rent_collected": total_rent_collected,
+        "occupancy_rate": round(occupancy_rate),
+        "upcoming_rent": upcoming_rent,
+        "recent_tenants": tenants.order_by("-id")[:5],
     }
     return render(request, "owners/dashboard.html", context)
 
@@ -150,7 +167,13 @@ def delete_tenant(request, id):
 def room_list(request):
     owner = get_owner(request)
     rooms = Room.objects.filter(owner=owner)
-    return render(request, "owners/room_list.html", {"rooms": rooms})
+    
+    # Handle search functionality
+    search = request.GET.get('search', '').strip()
+    if search:
+        rooms = rooms.filter(title__icontains=search) | rooms.filter(room_number__icontains=search) | rooms.filter(location__icontains=search)
+    
+    return render(request, "owners/room_list.html", {"rooms": rooms, "search": search})
 
 
 @login_required
@@ -288,6 +311,27 @@ def bookings_list(request):
 
 
 # ------------------------------------
+# MANAGEMENT
+# ------------------------------------
+@login_required
+@owner_required
+def management(request):
+    owner = get_owner(request)
+    rooms = Room.objects.filter(owner=owner)
+    tenants = Tenant.objects.filter(owner=owner)
+    
+    context = {
+        "total_rooms": rooms.count(),
+        "available_rooms": rooms.filter(is_available=True).count(),
+        "occupied_rooms": rooms.filter(is_available=False).count(),
+        "total_tenants": tenants.count(),
+        "paid_tenants": tenants.filter(paid=True).count(),
+        "unpaid_tenants": tenants.filter(paid=False).count(),
+    }
+    return render(request, "owners/management.html", context)
+
+
+# ------------------------------------
 # PROFILE
 # ------------------------------------
 @login_required
@@ -308,9 +352,9 @@ def profile(request):
 @require_POST
 @login_required
 @owner_required
-def mark_paid(request, tenant_id):
+def mark_paid(request, id):
     owner = get_owner(request)
-    tenant = get_object_or_404(Tenant, id=tenant_id, owner=owner)
+    tenant = get_object_or_404(Tenant, id=id, owner=owner)
     tenant.paid = True
     tenant.payment_date = now().date()
     tenant.save()
@@ -320,9 +364,9 @@ def mark_paid(request, tenant_id):
 @require_POST
 @login_required
 @owner_required
-def mark_unpaid(request, tenant_id):
+def mark_unpaid(request, id):
     owner = get_owner(request)
-    tenant = get_object_or_404(Tenant, id=tenant_id, owner=owner)
+    tenant = get_object_or_404(Tenant, id=id, owner=owner)
     tenant.paid = False
     tenant.payment_date = None
     tenant.save()
