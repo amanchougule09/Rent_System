@@ -4,34 +4,64 @@
 {% block title %}{{ room.title }}{% endblock %}
 
 {% block content %}
-<div class="room-detail">
-  <h2>{{ room.title }}</h2>
-  {% if room.image %}
-    <img src="{{ room.image.url }}" alt="{{ room.title }}">
-  {% endif %}
-  <p>{{ room.description }}</p>
-  <p><strong>Location:</strong> {{ room.location }}</p>
-  <p><strong>Price:</strong> ₹{{ room.rent_amount }} / month</p>
+<div class="container detail-container">
+    
+    <div class="detail-left">
+        {% if room.image %}
+            <img src="{{ room.image.url }}" alt="{{ room.title }}" class="main-detail-img">
+        {% endif %}
+        
+        <h1 class="detail-title">{{ room.title }}</h1>
+        <p class="detail-location">📍 {{ room.location }}</p>
+        
+        <div class="detail-description">
+            <h3>Description</h3>
+            <p>{{ room.description }}</p>
+        </div>
+    </div>
 
-  <h3>Book this room</h3>
-  {% if messages %}
-    {% for m in messages %}
-      <div class="message {{ m.tags }}">{{ m }}</div>
-    {% endfor %}
-  {% endif %}
+    <div class="detail-right">
+        <div class="booking-card">
+            <div class="price-header">
+                <span class="amount">₹{{ room.rent_amount }}</span>
+                <span class="period">/ month</span>
+            </div>
 
-  {% if errors.date %}
-    <div class="error">{{ errors.date }}</div>
-  {% endif %}
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="alert {{ m.tags }}">{{ m }}</div>
+                {% endfor %}
+            {% endif %}
 
-  <form method="post">
-    {% csrf_token %}
-    <label>Start date <input type="date" name="start_date" required></label><br>
-    <label>End date <input type="date" name="end_date" required></label><br>
-    <label>Your name <input type="text" name="name" required></label><br>
-    <label>Your email <input type="email" name="email" required></label><br>
-    <label>Phone <input type="text" name="phone"></label><br>
-    <button type="submit">Request Booking</button>
-  </form>
+            <form method="post" class="booking-form">
+                {% csrf_token %}
+                
+                <h4>Book this room</h4>
+                
+                <div class="form-group">
+                    <label>Dates</label>
+                    <div class="date-row">
+                        <input type="date" name="start_date" required class="half-input">
+                        <input type="date" name="end_date" required class="half-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Full Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" name="phone" placeholder="Phone Number">
+                </div>
+
+                <button type="submit" class="submit-btn full-width">Request Booking</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

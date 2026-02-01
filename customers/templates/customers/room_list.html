@@ -1,27 +1,50 @@
 {% extends "rent/base.html" %}
 {% load static %}
 
-{% block title %}Rooms{% endblock %}
+{% block title %}Find Your Ideal Home{% endblock %}
 
 {% block content %}
-<input type="text" name="location" placeholder="Search by location e.g. Mumbai" id="locationSearch">
-<h2>Available Rooms</h2>
-<div class="room-grid">
-{% for room in rooms %}
-  <div class="room-card">
-    <a href="{% url 'customers:room_detail' room.id %}">
-      {% if room.image %}
-        <img src="{{ room.image.url }}" alt="{{ room.title }}">
-      {% else %}
-        <img src="{% static 'rent/default_room.jpg' %}" alt="{{ room.title }}">
-      {% endif %}
-      <h3>{{ room.title }}</h3>
-      <p class="location">{{ room.location }}</p>
-      <p class="price">₹{{ room.rent_amount }}</p>
-    </a>
-  </div>
-{% empty %}
-  <p>No rooms available right now.</p>
-{% endfor %}
+
+<div class="hero-section">
+    <div class="hero-overlay">
+        <div class="hero-content">
+            <h1>Find Your Ideal Home in India</h1>
+            
+            <form method="GET" class="search-bar">
+                <div class="search-input-group">
+                    <input type="text" name="location" placeholder="Location (e.g. Mumbai)" value="{{ request.GET.location }}">
+                </div>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container room-section">
+    <h2>Available Rooms</h2>
+    
+    <div class="room-grid">
+        {% for room in rooms %}
+        <div class="room-card">
+            <div class="card-image">
+                {% if room.image %}
+                    <img src="{{ room.image.url }}" alt="{{ room.title }}">
+                {% else %}
+                    <div class="no-image">No Image</div>
+                {% endif %}
+            </div>
+            
+            <div class="card-details">
+                <h3>{{ room.title }}</h3>
+                <p class="location-text">{{ room.location }}</p>
+                <p class="price-text">₹{{ room.rent_amount }}<span class="per-month">/month</span></p>
+                
+                <p class="availability">Available Now</p> <a href="{% url 'customers:room_detail' room.id %}" class="view-btn">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-results">No rooms found matching your criteria.</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
