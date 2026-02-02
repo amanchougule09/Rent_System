@@ -1,0 +1,26 @@
+{% extends "rent/base_authenticated.html" %}
+{% load static %}
+
+{% block sidebar_links %}
+<a href="{% url 'tenants:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+    <span class="icon">⊞</span> Dashboard
+</a>
+<a href="{% url 'tenants:profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+    <span class="icon">👤</span> Profile
+</a>
+<a href="#" class="{% if request.resolver_match.url_name == 'payments' %}active{% endif %}">
+    <span class="icon">💳</span> Payments
+</a>
+<a href="#" class="{% if request.resolver_match.url_name == 'support' %}active{% endif %}">
+    <span class="icon">📞</span> Support
+</a>
+{% endblock %}
+
+{% block search_box %}
+<div style="text-align: center;">
+    <span style="color: #666; font-size: 14px;">Tenant Dashboard</span>
+</div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
