@@ -1,0 +1,32 @@
+{% extends "rent/base_authenticated.html" %}
+{% load static %}
+
+{% block sidebar_links %}
+<a href="{% url 'owners:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+    <span class="icon">⊞</span> Dashboard
+</a>
+<a href="{% url 'owners:room_list' %}" class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">
+    <span class="icon">🏠</span> Rooms
+</a>
+<a href="{% url 'owners:add_room' %}" class="{% if request.resolver_match.url_name == 'add_room' %}active{% endif %}">
+    <span class="icon">⊕</span> Add Room
+</a>
+<a href="{% url 'owners:management' %}" class="{% if request.resolver_match.url_name == 'management' %}active{% endif %}">
+    <span class="icon">⚙</span> Management
+</a>
+<a href="{% url 'owners:tenant_list' %}" class="{% if request.resolver_match.url_name == 'tenant_list' %}active{% endif %}">
+    <span class="icon">👥</span> Tenants
+</a>
+<a href="{% url 'owners:profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+    <span class="icon">👤</span> Profile
+</a>
+{% endblock %}
+
+{% block search_box %}
+<form method="get" action="{% url 'owners:room_list' %}">
+    <input type="text" name="search" placeholder="Search rooms..." value="{{ request.GET.search }}">
+</form>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

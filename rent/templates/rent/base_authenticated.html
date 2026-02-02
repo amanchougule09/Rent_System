@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rental Manago{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+<body class="dashboard-body">
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <img src="{% static 'rent/LOGO.png' %}" alt="Rental Manago" class="nav-logo">
+    </div>
+
+    <nav class="sidebar-links">
+        {% block sidebar_links %}
+        <!-- Sidebar links will be overridden by child templates -->
+        {% endblock %}
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="#">Settings</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="top-header">
+        <div class="search-box">
+            {% block search_box %}
+            <!-- Search box content can be overridden by child templates -->
+            {% endblock %}
+        </div>
+        <div class="header-user">
+            <span class="notification">🔔</span>
+            <span class="username">{{ request.user.first_name|default:request.user.username }}</span>
+            <div class="user-avatar"></div>
+        </div>
+    </header>
+
+    <div class="content-padding">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+</body>
+</html>

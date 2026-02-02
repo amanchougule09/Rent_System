@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rental Manago{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'rent/style.css' %}">
+</head>
+<body class="public-body">
+
+<!-- TOP NAVBAR FOR PUBLIC PAGES -->
+<nav class="navbar">
+    <a href="{% url 'customers:room_list' %}" class="brand-link">
+        <img src="{% static 'rent/LOGO.png' %}" alt="Rental Manago" class="nav-logo">
+        <span>Rental Manago</span>
+    </a>
+    
+    <div class="nav-links">
+        <a href="{% url 'customers:room_list' %}" class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Browse Rooms</a>
+    </div>
+    
+    <div class="nav-actions">
+        {% if request.session.user_id %}
+            <span class="username">{{ request.session.mobile }}</span>
+            <a href="{% url 'accounts:logout' %}" class="btn-nav">Logout</a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn-nav login-highlight">Login</a>
+        {% endif %}
+    </div>
+</nav>
+
+<main class="main-public-content">
+    <div class="content-public">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2024 Rental Manago. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
