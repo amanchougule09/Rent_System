@@ -1,0 +1,337 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                     RENT SYSTEM - ARCHITECTURE OVERVIEW                      ║
+║                    (After Layout & Navigation Restructuring)                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            TEMPLATE ARCHITECTURE                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+                              /rent/templates/rent/
+                                      │
+                    ┌───────────────────┼───────────────────┐
+                    │                   │                   │
+              base.html           base_public.html   base_authenticated.html
+              (DEPRECATED)        (FOR PUBLIC)       (FOR AUTHENTICATED)
+                    │                   │                   │
+                    │              ┌────┴────┐              ├────┬────────┐
+                    │              │          │              │    │        │
+              (no users)      room_list    room_detail    base_  base_  (others)
+                              detail       owner.html    tenant
+                                           .html
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              USER FLOW DIAGRAM                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+           ┌─────────────────────┐
+           │  Visit Website      │
+           │  /customers/        │
+           └──────────┬──────────┘
+                      │
+                      ▼
+           ┌─────────────────────┐
+           │  Authenticated?     │
+           └──────────┬──────────┘
+            ┌─────────┴─────────┐
+            │                   │
+           NO                  YES
+            │                   │
+            ▼                   ▼
+    ┌──────────────────┐  ┌────────────────┐
+    │  base_public.html │  │  Check Role    │
+    │                  │  └────────┬────────┘
+    │  ┌────────────────┤       ┌──┴──┬──┐
+    │  │                │       │     │  │
+    │ Top Navbar       │      OR    TE  CU
+    │ No Sidebar       │      NE    NA  ST
+    │ Full Width       │      R     NT  OM
+    │ Login Button     │      │     │    │
+    │  └────────────────┤     │     │    │
+    │                  │     ▼     ▼    ▼
+    │ Click Login ────→│ ┌────────┬──────┬─────────┐
+    └──────────────────┘ │        │      │         │
+                      base_owner  base_  room_list
+                      .html     tenant.  (public)
+                                html
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            TEMPLATE INHERITANCE                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+base_public.html
+│
+├─ Style: public-body
+├─ Navbar: Fixed top with Login button
+├─ Layout: Full-width, no sidebar
+└─ Content: Full-width container
+   │
+   ├─ room_list.html (extends)
+   │  └─ Shows available rooms in grid
+   │
+   └─ room_detail.html (extends)
+      └─ Shows single room details + booking form
+
+
+base_authenticated.html
+│
+├─ Style: dashboard-body
+├─ Layout: Sidebar (240px) + Main Content
+├─ Sidebar: Navigation items (customizable)
+├─ Header: Search box + User info
+└─ Content: Main content area with padding
+   │
+   ├─ base_owner.html (extends)
+   │  ├─ Sidebar Links:
+   │  │  ├─ Dashboard
+   │  │  ├─ Rooms
+   │  │  ├─ Add Room
+   │  │  ├─ Management
+   │  │  ├─ Tenants
+   │  │  └─ Profile
+   │  │
+   │  └─ Used by 12 owner templates:
+   │     ├─ dashboard.html
+   │     ├─ room_list.html
+   │     ├─ add_room.html
+   │     ├─ edit_room.html
+   │     ├─ room_detail.html
+   │     ├─ tenant_list.html
+   │     ├─ tenant_detail.html
+   │     ├─ add_tenant.html
+   │     ├─ assign_tenant.html
+   │     ├─ management.html
+   │     ├─ profile.html
+   │     └─ bookings_list.html
+   │
+   └─ base_tenant.html (extends)
+      ├─ Sidebar Links:
+      │  ├─ Dashboard
+      │  ├─ Profile
+      │  ├─ Payments
+      │  └─ Support
+      │
+      └─ Used by 2 tenant templates:
+         ├─ dashboard.html
+         └─ profile.html
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            LAYOUT COMPARISON                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+PUBLIC PAGES (base_public.html):
+┌────────────────────────────────────────────┐
+│ Logo      Browse Rooms     [Login Button]   │ ← Fixed Navbar (70px)
+├────────────────────────────────────────────┤
+│                                            │
+│           Full-Width Content               │ ← No Sidebar
+│           (Hero + Room Grid)               │
+│                                            │
+├────────────────────────────────────────────┤
+│ © 2024 Rental Manago                       │ ← Footer
+└────────────────────────────────────────────┘
+
+
+OWNER DASHBOARD (base_owner.html):
+┌──────────────┬─────────────────────────────┐
+│   SIDEBAR    │ [Search] [User]             │ ← Header
+│   (240px)    ├─────────────────────────────┤
+│              │                             │
+│ Dashboard    │     Main Content Area       │
+│ Rooms        │     (Stats, Tables, etc)    │
+│ Add Room     │                             │
+│ Management   │                             │
+│ Tenants      │                             │
+│ Profile      │                             │
+│              │                             │
+│ Settings     │                             │
+│ Logout       │                             │
+└──────────────┴─────────────────────────────┘
+
+
+TENANT DASHBOARD (base_tenant.html):
+┌──────────────┬─────────────────────────────┐
+│   SIDEBAR    │ Simple Header               │
+│   (240px)    ├─────────────────────────────┤
+│              │                             │
+│ Dashboard    │     Main Content Area       │
+│ Profile      │     (Payment Status, etc)   │
+│ Payments     │                             │
+│ Support      │                             │
+│              │                             │
+│ Settings     │                             │
+│ Logout       │                             │
+└──────────────┴─────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            CSS STRUCTURE                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+style.css (Updated with new CSS)
+│
+├─ Global Styles (existing)
+│  ├─ * { box-sizing, font-family }
+│  └─ Generic elements
+│
+├─ Public Page Styles (NEW)
+│  ├─ body.public-body
+│  ├─ .main-public-content
+│  ├─ .content-public
+│  └─ .footer
+│
+├─ Navigation Bar Styles (NEW)
+│  ├─ .navbar
+│  ├─ .brand-link
+│  ├─ .nav-logo
+│  ├─ .nav-links
+│  ├─ .nav-actions
+│  ├─ .username
+│  ├─ .btn-nav
+│  └─ .login-highlight
+│
+├─ Dashboard Styles (existing)
+│  ├─ body.dashboard-body
+│  ├─ .sidebar
+│  ├─ .main-content
+│  ├─ .top-header
+│  ├─ .content-padding
+│  ├─ .stats-container
+│  └─ .stat-card
+│
+├─ Room Grid/Detail Styles (existing)
+│  ├─ .room-grid
+│  ├─ .room-card
+│  ├─ .detail-container
+│  └─ .booking-card
+│
+└─ Responsive Styles (updated)
+   ├─ @media (max-width: 768px)
+   │  ├─ Navbar flex-wrap
+   │  ├─ Nav links wrap
+   │  └─ Adaptive spacing
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          COLOR SCHEME USED                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+Primary Colors:
+  ✓ Brand Green:   #2A8470  (Buttons, hover states, active links)
+  ✓ Brand Blue:    #1B4D89  (Headings, logo)
+  ✓ Darker Green:  #1f6354  (Hover effects)
+
+Background Colors:
+  ✓ Light Beige:   #f4f7f9  (Public pages background)
+  ✓ Light Blue:    #f8faff  (Dashboard pages background)
+  ✓ White:         #ffffff  (Cards, navbar, sidebar)
+
+Text Colors:
+  ✓ Dark Gray:     #333    (Primary text)
+  ✓ Medium Gray:   #555    (Secondary text)
+  ✓ Light Gray:    #777    (Tertiary text)
+
+Border Colors:
+  ✓ Light Border:  #eee    (1px solid borders)
+  ✓ Lighter Border:#e0e0e0 (Form inputs)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        RESPONSIVE BREAKPOINTS                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+Desktop (>= 768px):
+  ├─ Navbar: Single row, all items visible
+  ├─ Sidebar: Fully visible (240px)
+  ├─ Content: Main area expanded
+  └─ Font size: Standard (16px base)
+
+Tablet (481px - 767px):
+  ├─ Navbar: Starting to wrap items
+  ├─ Sidebar: Still visible but may compress
+  ├─ Content: Some adjustments
+  └─ Font size: Slightly adjusted
+
+Mobile (<= 480px):
+  ├─ Navbar: Multi-line, wrapping items
+  ├─ Sidebar: May collapse or adapt
+  ├─ Content: Full-width stack
+  └─ Font size: Responsive (clamp)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          AUTHENTICATION FLOW                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+Request Received
+    │
+    ├─ Check session for user_id
+    │
+    ├─ If NOT logged in:
+    │  └─ Redirect to /customers/ (public page)
+    │     └─ Display base_public.html (with Login button)
+    │
+    └─ If logged in:
+       ├─ Check user role in session
+       │
+       ├─ If role == "owner":
+       │  └─ Redirect to /owners/dashboard/
+       │     └─ Display base_owner.html (with owner sidebar)
+       │
+       ├─ If role == "tenant":
+       │  └─ Redirect to /tenants/dashboard/
+       │     └─ Display base_tenant.html (with tenant sidebar)
+       │
+       └─ If role == "customer":
+          └─ Redirect to /customers/
+             └─ Display base_public.html (with logout option)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            FILE STRUCTURE                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+rent_project/
+├── manage.py
+├── db.sqlite3
+├── TEMPLATE_STRUCTURE_CHANGES.md
+├── TEMPLATE_HIERARCHY.md
+├── CSS_CHANGES.md
+├── QUICK_REFERENCE.md
+├── IMPLEMENTATION_COMPLETE.md
+│
+├── rent/
+│  ├── static/rent/
+│  │  └── style.css (UPDATED - +~150 lines)
+│  │
+│  └── templates/rent/
+│     ├── base.html (DEPRECATED)
+│     ├── base_public.html (NEW)
+│     ├── base_authenticated.html (NEW)
+│     ├── base_owner.html (NEW)
+│     └── base_tenant.html (NEW)
+│
+├── customers/
+│  └── templates/customers/
+│     ├── room_list.html (UPDATED)
+│     └── room_detail.html (UPDATED)
+│
+├── owners/
+│  └── templates/owners/
+│     ├── dashboard.html (UPDATED)
+│     ├── room_list.html (UPDATED)
+│     ├── add_room.html (UPDATED)
+│     ├── edit_room.html (UPDATED)
+│     ├── room_detail.html (UPDATED)
+│     ├── tenant_list.html (UPDATED)
+│     ├── tenant_detail.html (UPDATED)
+│     ├── add_tenant.html (UPDATED)
+│     ├── assign_tenant.html (UPDATED)
+│     ├── management.html (UPDATED)
+│     ├── profile.html (UPDATED)
+│     └── bookings_list.html (UPDATED)
+│
+└── tenants/
+   └── templates/tenants/
+      ├── dashboard.html (UPDATED)
+      └── profile.html (UPDATED)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         IMPLEMENTATION COMPLETE                              ║
+║                     Status: ✅ READY FOR DEPLOYMENT                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
