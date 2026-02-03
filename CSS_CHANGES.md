@@ -5,6 +5,7 @@ File: `/workspaces/Rent_System/rent/static/rent/style.css`
 
 ## New CSS Added (Lines ~1220-1366)
 
+
 ### 1. Public Page Body Styles
 ```css
 body.public-body {
